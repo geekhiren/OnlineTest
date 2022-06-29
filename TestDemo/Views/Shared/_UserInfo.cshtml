@@ -1,0 +1,39 @@
+﻿@using TestDemo.Models
+@{
+    UserVM userConnected = Session["UserConnected"] as UserVM;
+    TestVM quizSelected = Session["SelectedQuiz"] as TestVM;
+
+}
+
+
+    @if (userConnected != null)
+    {
+        <div class="row">
+
+            <div class="col-md-4">
+                <span> <b>Welcome :</b> @userConnected.UserName</span>
+            </div>
+
+            <div class="col-md-4" style="margin-top: 15px;">
+
+                @if ( quizSelected != null && !string.IsNullOrEmpty(quizSelected.TestName))
+                {
+                    <span> <b>Quiz Selected :</b> @quizSelected.TestName</span>
+                }
+                else
+                {
+                    <span> <b>Please Select your Quiz </b></span>
+                }
+
+            </div>
+
+            <div class="col-md-4" style="margin-top: 15px;">
+                <span> <b>Date :</b> @DateTime.Now</span>
+            </div>
+
+        </div>
+    }
+
+   
+
+
