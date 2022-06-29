@@ -13,6 +13,7 @@ namespace TestDemo.Models
     {
         public int TestID { get; set; }
         public string TestName { get; set; }
+        public int NumberOfQuestion { get; set; }
         public List<SelectListItem> ListOfTest { get; set; }
 
     }
@@ -38,6 +39,9 @@ namespace TestDemo.Models
         public string QuestionText { get; set; }
         public string AnswerQ { get; set; }
         public bool isCorrect { get; set; }
+        public int TotalMark { get; set; }
+
+
 
 
     }

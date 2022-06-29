@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using TestDemo.Models;
@@ -67,6 +68,7 @@ namespace QuizApplicationMVC5.Controllers
             {
                 TestID = q.TestID,
                 TestName = q.TestName,
+                NumberOfQuestion = test.NumberOfQuestion
 
             }).FirstOrDefault();
 
@@ -85,7 +87,6 @@ namespace QuizApplicationMVC5.Controllers
         {
             TestVM quizSelected = Session["SelectedTest"] as TestVM;
             IQueryable<QuestionVM> questions = null;
-
             if (quizSelected != null)
             {
                 questions = dbContext.Questions.Where(q => q.Test.TestID == quizSelected.TestID)
@@ -99,17 +100,16 @@ namespace QuizApplicationMVC5.Controllers
                            ChoiceText = c.ChoiceText
                        }).ToList()
 
-                   }).AsQueryable();
-
-
+                   }).AsQueryable().Take(quizSelected.NumberOfQuestion);
             }
-
             return View(questions);
         }
 
         [HttpPost]
         public ActionResult QuizTest(List<TestAnswersVM> resultQuiz)
         {
+            List<TestAnswersVM> ResultQuiz = new List<TestAnswersVM>();
+
             List<TestAnswersVM> finalResultQuiz = new List<TestAnswersVM>();
 
             foreach (TestAnswersVM answser in resultQuiz)
@@ -118,11 +118,53 @@ namespace QuizApplicationMVC5.Controllers
                 {
                     QuestionID = a.QuestionID.Value,
                     AnswerQ = a.AnswerText,
+                    QuestionText = a.Question.QuestionText,
                     isCorrect = (answser.AnswerQ.ToLower().Equals(a.AnswerText.ToLower()))
 
                 }).FirstOrDefault();
 
-                finalResultQuiz.Add(result);
+                ResultQuiz.Add(result);
+            }
+            foreach (var item in ResultQuiz)
+            {
+                int a = 0;
+                if (item.isCorrect == true)
+                {
+                    TestAnswersVM result = new TestAnswersVM()
+                    {
+                        AnswerQ = item.AnswerQ,
+                        isCorrect = item.isCorrect,
+                        QuestionID = item.QuestionID,
+                        QuestionText = item.QuestionText,
+                        TotalMark = 1
+                    };
+                    finalResultQuiz.Add(result);
+                }
+                else
+                {
+                    TestAnswersVM result = new TestAnswersVM()
+                    {
+                        AnswerQ = item.AnswerQ,
+                        isCorrect = item.isCorrect,
+                        QuestionID = item.QuestionID,
+                        QuestionText = item.QuestionText,
+                        TotalMark = 0
+                    };
+                    finalResultQuiz.Add(result);
+                }
+            }
+            UserVM userConnected = Session["UserConnected"] as UserVM;
+            Mark mark = new Mark()
+            {
+                TotalQA = finalResultQuiz.Count(),
+                TotalMark = finalResultQuiz.Sum(x => x.TotalMark),
+                Username = userConnected.UserName
+            };
+
+            if (mark != null)
+            {
+                dbContext.Marks.Add(mark);
+                dbContext.SaveChangesAsync();
             }
 
             return Json(new { result = finalResultQuiz }, JsonRequestBehavior.AllowGet);
