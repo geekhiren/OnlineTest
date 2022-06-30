@@ -112,6 +112,8 @@ namespace QuizApplicationMVC5.Controllers
 
             List<TestAnswersVM> finalResultQuiz = new List<TestAnswersVM>();
 
+            FinalModel finalResultTest = new FinalModel();
+
             foreach (TestAnswersVM answser in resultQuiz)
             {
                 TestAnswersVM result = dbContext.Answers.Where(a => a.QuestionID == answser.QuestionID).Select(a => new TestAnswersVM
@@ -166,6 +168,16 @@ namespace QuizApplicationMVC5.Controllers
                 dbContext.Marks.Add(mark);
                 dbContext.SaveChangesAsync();
             }
+
+            //result
+            //foreach (var item in finalResultQuiz)
+            //{
+            //    finalResultTest.testAnswers.Add(item);
+            //}
+            finalResultTest.TotalMark = finalResultQuiz.Sum(x => x.TotalMark);
+            finalResultTest.TotalQA = finalResultQuiz.Count();
+
+
 
             return Json(new { result = finalResultQuiz }, JsonRequestBehavior.AllowGet);
         }

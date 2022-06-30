@@ -25,6 +25,8 @@ namespace TestDemo.Models
         public string QuestionType { get; set; }
         public string Anwser { get; set; }
         public  ICollection<ChoiceVM> Choices { get; set; }
+
+
     }
 
     public class ChoiceVM
@@ -41,8 +43,13 @@ namespace TestDemo.Models
         public bool isCorrect { get; set; }
         public int TotalMark { get; set; }
 
+    }
 
-
+    public class FinalModel
+    {
+        public ICollection<TestAnswersVM> testAnswers { get; set; }
+        public int TotalQA { get; set; }
+        public int TotalMark { get; set; }
 
     }
 }

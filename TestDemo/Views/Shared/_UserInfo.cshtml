@@ -1,7 +1,7 @@
 ﻿@using TestDemo.Models
 @{
     UserVM userConnected = Session["UserConnected"] as UserVM;
-    TestVM quizSelected = Session["SelectedQuiz"] as TestVM;
+    TestVM quizSelected = Session["SelectedTest"] as TestVM;
 
 }
 
@@ -10,7 +10,7 @@
     {
         <div class="row">
 
-            <div class="col-md-4">
+            <div class="col-md-4" style="margin-top: 15px;">
                 <span> <b>Welcome :</b> @userConnected.UserName</span>
             </div>
 
